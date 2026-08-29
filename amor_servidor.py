@@ -1,6 +1,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import parse_qs, urlparse
 import random
+import os
 
 # SVG Vectorial de Pompompurin
 POMPOMPURIN_NORMAL = '''
@@ -184,6 +185,11 @@ class MiServidor(BaseHTTPRequestHandler):
                 titulo = '¿Me amas? 😥'
                 svg_pompompurin = POMPOMPURIN_TRISTE
                 es_movil = True
+            elif opcion == 'no':
+                nuevo_estado = 'inicio'
+                titulo = '¿Me amas? 💌'
+                svg_pompompurin = POMPOMPURIN_NORMAL
+                es_movil = False
             else:
                 nuevo_estado = 'seguro'
                 titulo = '¿Estás seguro? 🥺'
@@ -226,6 +232,8 @@ class MiServidor(BaseHTTPRequestHandler):
         self.wfile.write(html_final.encode('utf-8'))
 
 if __name__ == '__main__':
-    servidor = HTTPServer(('localhost', 8000), MiServidor)
-    print("Servidor listo en http://localhost:8000")
+    # Lee el puerto que asigna Render dinámicamente o usa 8000 por defecto
+    puerto = int(os.environ.get('PORT', 8000))
+    servidor = HTTPServer(('0.0.0.0', puerto), MiServidor)
+    print(f"Servidor listo en el puerto {puerto}")
     servidor.serve_forever()
